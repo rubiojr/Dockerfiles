@@ -41,5 +41,5 @@ fi
 if [ -f $TAHOE_HOME/tahoe.cfg ]; then
 	check_env
 	chown $TAHOE_USER:$TAHOE_USER -R $TAHOE_HOME
-	su -c "tahoe start $TAHOE_HOME && cat" $TAHOE_USER
+	su -c "tahoe run $TAHOE_HOME" $TAHOE_USER
 fi

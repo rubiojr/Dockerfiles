@@ -1,0 +1,45 @@
+#!/bin/bash
+
+TAHOE_HOME=/home/tahoe/node
+CLIENT_PORT_FILE=$TAHOE_HOME/client.port
+TAHOE_CONFIG=$TAHOE_HOME/tahoe.cfg
+TAHOE_USER=tahoe
+
+check_env(){
+	if [ -z "$TAHOE_PORT" ]; then
+		echo "Missing TAHOE_PORT environment variable."
+		exit 1
+	else
+		echo "Creating client.port..."
+		echo $TAHOE_PORT > $CLIENT_PORT_FILE
+	fi
+
+	if [ -z "$TAHOE_INTRODUCER_FURL" ]; then
+		echo "Missing TAHOE_INTRODUCER_FURL environment variable."
+		exit 1
+	else
+		echo "Setting introducer.furl..."
+		sed -i "s/introducer.furl.*/introducer.furl = $TAHOE_INTRODUCER_FURL/" $TAHOE_CONFIG
+	fi
+
+	if [ -z "$TAHOE_NICKNAME" ]; then
+		echo "Missing TAHOE_NICKNAME environment variable."
+		exit 1
+	else
+		echo "Setting the nickname..."
+		sed -i "s/^nickname.*/nickname = $TAHOE_NICKNAME/" $TAHOE_CONFIG
+	fi
+
+}
+
+if ! [ -f $TAHOE_HOME/tahoe.cfg ]; then
+	tahoe create-node -p none $TAHOE_HOME
+	cp /etc/tahoe.cfg.tmpl $TAHOE_HOME/tahoe.cfg
+fi
+
+
+if [ -f $TAHOE_HOME/tahoe.cfg ]; then
+	check_env
+	chown $TAHOE_USER:$TAHOE_USER -R $TAHOE_HOME
+	su -c "tahoe start $TAHOE_HOME && cat" $TAHOE_USER
+fi

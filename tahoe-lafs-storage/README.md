@@ -2,7 +2,7 @@
 
 Edit tahoe.cfg to set `nickname` and `introducer.furl` and build the image. Then:
 
-    sudo docker build -rm -t tahoe-storage
+    sudo docker build -rm -t tahoe-storage .
     
 Script to run the storage node:
 
